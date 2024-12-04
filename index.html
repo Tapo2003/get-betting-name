@@ -9,11 +9,67 @@
       rel="stylesheet"
     />
     <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet"
     />
 
     <style>
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -250px;
+        width: 250px;
+        height: 100%;
+        background-color: black;
+        color: white;
+        overflow-y: auto;
+        transition: left 0.3s ease;
+        z-index: 1000;
+        padding-top: 20px;
+      }
+
+      .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .sidebar ul li {
+        padding: 15px 20px;
+        cursor: pointer;
+        border-bottom: 1px solid #495057;
+      }
+
+      .sidebar ul li:hover {
+        background-color: #495057;
+      }
+
+      /* Sidebar Toggle Styles */
+      .sidebar.active {
+        left: 0;
+      }
+
+      /* Overlay Styles */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0.3s, opacity 0.3s;
+        z-index: 999;
+      }
+
+      .overlay.active {
+        visibility: visible;
+        opacity: 1;
+      }
       .power-button {
         position: absolute;
         top: 270px;
@@ -75,6 +131,11 @@
         margin: 0 auto; /* Centers the map horizontally */
         margin-top: 50px; /* Adds some space above the map */
         position: relative;
+      }
+      #menuToggle {
+        position: relative; /* Ensure it is positioned relative to the document */
+        z-index: 1100; /* Set a higher z-index than the sidebar */
+        margin-left: 50px;
       }
 
       #map {
@@ -209,7 +270,7 @@
         }
 
         .country-selector {
-          width: 340px;
+          width: 390px;
           position: absolute;
         }
       }
@@ -301,12 +362,8 @@
         style="background-color: green"
       >
         <div class="container-fluid">
-          <button class="btn text-white" type="button">
-            <i
-              class="fas fa-bars"
-              style="color: white; font-size: 3rem"
-              id="side"
-            ></i>
+          <button id="menuToggle" class="btn text-white" type="button">
+            <i class="fas fa-bars" style="color: white; font-size: 3rem"></i>
           </button>
 
           <div class="ml-auto">
@@ -320,77 +377,54 @@
               >
                 Select Country
               </button>
-
-              <ul
-                class="dropdown-menu"
-                aria-labelledby="countrySelect"
-                id="countryDropdown"
-              >
+              <ul class="dropdown-menu" aria-labelledby="countrySelect">
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    data-lat="37.0902"
-                    data-lng="-95.7129"
-                    ><img
-                      src="flags/usa.png"
+                  <a class="dropdown-item" href="#">
+                    <img
+                      src="asset/img/usa-logo.png"
                       alt="USA Flag"
                       width="20"
                       height="15"
                     />
-                    USA</a
-                  >
+                    USA
+                  </a>
                 </li>
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    data-lat="51.5074"
-                    data-lng="-0.1278"
-                    ><img
-                      src="flags/uk.png"
-                      alt="UK Flag"
-                      width="20"
-                      height="15"
-                    />
-                    UK</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    data-lat="20.5937"
-                    data-lng="78.9629"
-                    ><img
-                      src="flags/india.png"
-                      alt="India Flag"
-                      width="20"
-                      height="15"
-                    />
-                    India</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    data-lat="51.1657"
-                    data-lng="10.4515"
-                    ><img
-                      src="flags/germany.png"
+                  <a class="dropdown-item" href="#">
+                    <img
+                      src="asset/img/german-logo.png"
                       alt="Germany Flag"
                       width="20"
                       height="15"
                     />
-                    Germany</a
-                  >
+                    Germany
+                  </a>
                 </li>
+                <li>
+                  <a class="dropdown-item" href="#">
+                    <img
+                      src="asset/img/usa-logo.png"
+                      alt="Japan Flag"
+                      width="20"
+                      height="15"
+                    />
+                    Japan
+                  </a>
+                </li>
+                <!-- Add more countries as needed -->
               </ul>
             </div>
           </div>
         </div>
       </nav>
+
+      <div class="sidebar" id="sidebar">
+        <ul>
+          <li>Home</li>
+          <li>Contact</li>
+          <li>Service</li>
+        </ul>
+      </div>
       <div class="map-container">
         <div id="map"></div>
       </div>
@@ -416,6 +450,24 @@
     </div>
 
     <script>
+      const menuToggle = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+
+      // Set the default state of the menu (hidden)
+      let isSidebarVisible = false;
+
+      // Set the default state of the menu (hidden)
+      menuToggle.addEventListener("click", () => {
+        // Toggle the sidebar's active state
+        sidebar.classList.toggle("active");
+        isSidebarVisible = !isSidebarVisible;
+
+        // Change the icon based on the sidebar's visibility
+        menuToggle.innerHTML = isSidebarVisible
+          ? '<i class="fas fa-times" style="color: white; font-size: 3rem"></i>' // Close icon
+          : '<i class="fas fa-bars" style="color: white; font-size: 3rem"></i>'; // Hamburger menu icon
+      });
+
       let map, marker;
 
       // Custom Map Style (Dark theme with various color adjustments)
@@ -491,8 +543,8 @@
         google.maps.event.addListener(marker, "dragend", function (event) {
           const newLat = event.latLng.lat(); // Get the new latitude
           const newLng = event.latLng.lng(); // Get the new longitude
-          console.log("New marker position:", { lat: newLat, lng: newLng });
-          alert(`Marker moved to:\nLatitude: ${newLat}\nLongitude: ${newLng}`);
+          // console.log("New marker position:", { lat: newLat, lng: newLng });
+          // alert(`Marker moved to:\nLatitude: ${newLat}\nLongitude: ${newLng}`);
         });
       }
 
@@ -520,5 +572,7 @@
     ></script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
   </body>
 </html>
