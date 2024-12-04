@@ -270,7 +270,7 @@
         }
 
         .country-selector {
-          width: 390px;
+          width: 398px;
           position: absolute;
         }
       }
@@ -430,13 +430,17 @@
       </div>
       <!-- Power Button with circular background -->
       <div class="content">
-        <button class="power-button">
+        <button class="power-button"  onclick="connect()">
           <i class="fa fa-power-off" aria-hidden="true"></i>
           <!-- Font Awesome Icon -->
         </button>
 
-        <div class="tap-container">
+        <!-- <div class="tap-container">
           <h2 class="tap-title">Tap to Connect</h2>
+        </div> -->
+
+        <div class="tap-container">
+          <h2 class="tap-title" id="tapTitle">Tap to Connect</h2>
         </div>
 
         <div class="country-selector">
@@ -450,6 +454,16 @@
     </div>
 
     <script>
+      function connect() {
+
+        document.getElementById("tapTitle").style.marginLeft = "80px";  // Apply left margin
+document.getElementById("tapTitle").style.textAlign = "center";  // Center-align the text
+        document.getElementById("tapTitle").textContent = "Connected";
+
+      }
+
+
+      
       const menuToggle = document.getElementById("menuToggle");
       const sidebar = document.getElementById("sidebar");
 
